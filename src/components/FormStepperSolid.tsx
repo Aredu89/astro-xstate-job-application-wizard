@@ -7,6 +7,8 @@ export default function FormStepper() {
   const [name, setName] = createSignal('');
   const [email, setEmail] = createSignal('');
   const [error, setError] = createSignal('');
+  const [experienceYears, setExperienceYears] = createSignal<number | ''>('');
+  const [technologies, setTechnologies] = createSignal('');
 
   const actor = createActor(formWizardMachine);
 
@@ -26,7 +28,17 @@ export default function FormStepper() {
       if (current.matches('personalInfo')) {
         setError('Please fill out both fields.');
       }
-    } else {
+    } else if (currentStep() === 'experience') {
+      const value = {
+        experienceYears: Number(experienceYears()),
+        technologies: technologies()
+      };
+      actor.send({ type: 'NEXT', value });
+      const current = actor.getSnapshot();
+      if (current.matches('experience')) {
+        setError('Please fill out both experience fields.');
+      }
+    }else {
       actor.send({ type: 'NEXT' });
     }
   };
@@ -57,6 +69,28 @@ export default function FormStepper() {
         </div>
       </Show>
 
+      <Show when={currentStep() === "experience"}>
+        <div class="space-y-2">
+          <input
+            type="number"
+            placeholder="Years of Experience"
+            value={experienceYears()}
+            onInput={(e) => setExperienceYears(e.currentTarget.valueAsNumber)}
+            class="border p-2 rounded w-full"
+          />
+          <input
+            type="text"
+            placeholder="Technologies used"
+            value={technologies()}
+            onInput={(e) => setTechnologies(e.currentTarget.value)}
+            class="border p-2 rounded w-full"
+          />
+          <Show when={error()}>
+            <p class="text-red-500 text-sm">{error()}</p>
+          </Show>
+        </div>
+      </Show>
+
       <div class="space-x-2">
         {['experience', 'portfolio', 'upload', 'review'].includes(currentStep()) && (
           <button onClick={back} class="px-4 py-2 bg-gray-500 text-white rounded">
@@ -76,4 +110,4 @@ export default function FormStepper() {
       </div>
     </div>
   );
-}
+};
