@@ -3,4 +3,5 @@ export type FormData = {
   email: string;
   experienceYears?: number;
   technologies?: string;
+  portfolioLinks?: string;
 };

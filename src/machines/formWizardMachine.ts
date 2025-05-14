@@ -24,12 +24,12 @@ export const formWizardMachine = createMachine({
       on: {
         NEXT: {
           target: 'experience',
-          actions: assign({
-            data: ({ context, event }) => ({
+          actions: assign(({ context, event }) => ({
+            data: {
               ...context.data,
-              ...event.value,
-            }),
-          }),
+              ...(event.value ?? {}),
+            },
+          })),
           guard: ({ event }) => !!event.value?.name && !!event.value?.email,
         },
       },
@@ -51,7 +51,21 @@ export const formWizardMachine = createMachine({
         BACK: 'personalInfo',
       },
     },
-    portfolio: { on: { NEXT: 'upload', BACK: 'experience' } },
+    portfolio: {
+      on: {
+        NEXT: {
+          target: 'upload',
+          actions: assign(({ context, event }) => ({
+            data: {
+              ...context.data,
+              ...(event.value ?? {}),
+            },
+          })),
+          guard: ({ event }) => !!event.value?.portfolioLinks,
+        },
+        BACK: 'experience',
+      },
+    },
     upload: { on: { NEXT: 'review', BACK: 'portfolio' } },
     review: { on: { SUBMIT: 'submitted', BACK: 'upload' } },
     submitted: { type: 'final' },

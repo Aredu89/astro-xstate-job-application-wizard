@@ -9,6 +9,7 @@ export default function FormStepper() {
   const [error, setError] = createSignal('');
   const [experienceYears, setExperienceYears] = createSignal<number | ''>('');
   const [technologies, setTechnologies] = createSignal('');
+  const [portfolioLinks, setPortfolioLinks] = createSignal('');
 
   const actor = createActor(formWizardMachine);
 
@@ -38,7 +39,16 @@ export default function FormStepper() {
       if (current.matches('experience')) {
         setError('Please fill out both experience fields.');
       }
-    }else {
+    } else if (currentStep() === 'portfolio') {
+      const value = {
+        portfolioLinks: portfolioLinks()
+      };
+      actor.send({ type: 'NEXT', value });
+      const current = actor.getSnapshot();
+      if (current.matches('portfolio')) {
+        setError('Please enter at least one portfolio link.');
+      }
+    } else {
       actor.send({ type: 'NEXT' });
     }
   };
@@ -84,6 +94,21 @@ export default function FormStepper() {
             value={technologies()}
             onInput={(e) => setTechnologies(e.currentTarget.value)}
             class="border p-2 rounded w-full"
+          />
+          <Show when={error()}>
+            <p class="text-red-500 text-sm">{error()}</p>
+          </Show>
+        </div>
+      </Show>
+
+      <Show when={currentStep() === 'portfolio'}>
+        <div class="space-y-2">
+          <textarea
+            placeholder="Enter portfolio URLs (comma-separated)"
+            value={portfolioLinks()}
+            onInput={(e) => setPortfolioLinks(e.currentTarget.value)}
+            class="border p-2 rounded w-full"
+            rows="4"
           />
           <Show when={error()}>
             <p class="text-red-500 text-sm">{error()}</p>
