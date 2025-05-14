@@ -1,9 +1,7 @@
-import { createMachine, assign } from 'xstate';
+import { assign, setup, assertEvent } from 'xstate';
 import type { FormData } from "./types";
 
-export const formWizardMachine = createMachine({
-  id: 'formWizard',
-  initial: 'personalInfo',
+export const formWizardMachine = setup({
   types: {
     context: {} as {
       data: FormData;
@@ -13,6 +11,20 @@ export const formWizardMachine = createMachine({
       | { type: 'BACK' }
       | { type: 'SUBMIT' },
   },
+  actions: {
+    assignFormData: assign(({ context, event }) => {
+      assertEvent(event, 'NEXT');
+      return {
+        data: {
+          ...context.data,
+          ...(event.value ?? {}),
+        },
+      };
+    }),
+  },
+}).createMachine({
+  id: 'formWizard',
+  initial: 'personalInfo',
   context: {
     data: {
       name: '',
@@ -24,12 +36,7 @@ export const formWizardMachine = createMachine({
       on: {
         NEXT: {
           target: 'experience',
-          actions: assign(({ context, event }) => ({
-            data: {
-              ...context.data,
-              ...(event.value ?? {}),
-            },
-          })),
+          actions: "assignFormData",
           guard: ({ event }) => !!event.value?.name && !!event.value?.email,
         },
       },
@@ -38,12 +45,7 @@ export const formWizardMachine = createMachine({
       on: {
         NEXT: {
           target: 'portfolio',
-          actions: assign(({ context, event }) => ({
-            data: {
-              ...context.data,
-              ...(event.value ?? {}),
-            },
-          })),
+          actions: "assignFormData",
           guard: ({ event }) =>
             typeof event.value?.experienceYears === 'number' &&
             !!event.value?.technologies,
@@ -55,12 +57,7 @@ export const formWizardMachine = createMachine({
       on: {
         NEXT: {
           target: 'upload',
-          actions: assign(({ context, event }) => ({
-            data: {
-              ...context.data,
-              ...(event.value ?? {}),
-            },
-          })),
+          actions: "assignFormData",
           guard: ({ event }) => !!event.value?.portfolioLinks,
         },
         BACK: 'experience',
