@@ -149,7 +149,7 @@ export default function FormStepper() {
         </div>
       </Show>
 
-      <div class="space-x-2">
+      <div class="space-x-2 mt-2">
         {['experience', 'portfolio', 'upload', 'review'].includes(currentStep()) && (
           <button onClick={back} class="px-4 py-2 bg-gray-500 text-white rounded">
             Back
