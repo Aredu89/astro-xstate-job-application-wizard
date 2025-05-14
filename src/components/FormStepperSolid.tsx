@@ -10,6 +10,7 @@ export default function FormStepper() {
   const [experienceYears, setExperienceYears] = createSignal<number | ''>('');
   const [technologies, setTechnologies] = createSignal('');
   const [portfolioLinks, setPortfolioLinks] = createSignal('');
+  const [fileName, setFileName] = createSignal('');
 
   const actor = createActor(formWizardMachine);
 
@@ -48,7 +49,13 @@ export default function FormStepper() {
       if (current.matches('portfolio')) {
         setError('Please enter at least one portfolio link.');
       }
-    } else {
+    } else if (currentStep() === 'upload') {
+      if (!fileName()) {
+        setError('Please upload a file.');
+      } else {
+        actor.send({ type: 'NEXT', value: { fileName: fileName() } });
+      }
+    }  else {
       actor.send({ type: 'NEXT' });
     }
   };
@@ -110,6 +117,32 @@ export default function FormStepper() {
             class="border p-2 rounded w-full"
             rows="4"
           />
+          <Show when={error()}>
+            <p class="text-red-500 text-sm">{error()}</p>
+          </Show>
+        </div>
+      </Show>
+
+      <Show when={currentStep() === 'upload'}>
+        <div class="space-y-2">
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.currentTarget.files?.[0];
+              if (file) {
+                setFileName(file.name);
+              }
+            }}
+            class="block w-full text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100"
+          />
+          <Show when={fileName()}>
+            <p class="text-sm text-gray-700">Uploaded file: {fileName()}</p>
+          </Show>
           <Show when={error()}>
             <p class="text-red-500 text-sm">{error()}</p>
           </Show>

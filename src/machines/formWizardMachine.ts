@@ -63,7 +63,16 @@ export const formWizardMachine = setup({
         BACK: 'experience',
       },
     },
-    upload: { on: { NEXT: 'review', BACK: 'portfolio' } },
+    upload: {
+      on: {
+        NEXT: {
+          target: 'review',
+          actions: 'assignFormData',
+          guard: ({ event }) => !!event.value?.fileName,
+        },
+        BACK: 'portfolio',
+      },
+    },
     review: { on: { SUBMIT: 'submitted', BACK: 'upload' } },
     submitted: { type: 'final' },
   },
