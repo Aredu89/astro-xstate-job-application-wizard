@@ -21,6 +21,9 @@ export const formWizardMachine = setup({
         },
       };
     }),
+    logFinalData: ({ context }) => {
+      console.log('Form submitted with data:', context.data);
+    }
   },
 }).createMachine({
   id: 'formWizard',
@@ -73,7 +76,15 @@ export const formWizardMachine = setup({
         BACK: 'portfolio',
       },
     },
-    review: { on: { SUBMIT: 'submitted', BACK: 'upload' } },
+    review: {
+      on: {
+        BACK: 'upload',
+        SUBMIT: {
+          target: 'submitted',
+          actions: 'logFinalData',
+        }
+      }
+    },
     submitted: { type: 'final' },
   },
 });

@@ -23,6 +23,9 @@ export default function FormStepper() {
   actor.start();
   onCleanup(() => actor.stop());
 
+  const snapshot = () => actor.getSnapshot();
+  const data = () => snapshot().context.data;
+
   const next = () => {
     if (currentStep() === 'personalInfo') {
       const value = { name: name(), email: email() };
@@ -147,6 +150,26 @@ export default function FormStepper() {
           <Show when={error()}>
             <p class="text-red-500 text-sm">{error()}</p>
           </Show>
+        </div>
+      </Show>
+
+      <Show when={currentStep() === 'review'}>
+        <div class="space-y-2">
+          <h3 class="text-lg font-semibold">Review Your Information</h3>
+          <ul class="list-disc ml-5 space-y-1 text-sm">
+            <li><strong>Name:</strong> {data().name}</li>
+            <li><strong>Email:</strong> {data().email}</li>
+            <li><strong>Years Experience:</strong> {data().experienceYears}</li>
+            <li><strong>Skills:</strong> {data().technologies}</li>
+            <li><strong>Portfolio URL:</strong> {data().portfolioLinks}</li>
+            <li><strong>Uploaded File:</strong> {data().fileName ?? 'None'}</li>
+          </ul>
+        </div>
+      </Show>
+
+      <Show when={currentStep() === 'submitted'}>
+        <div class="space-y-2">
+          <h3 class="text-lg font-semibold">Thank you for applying!</h3>
         </div>
       </Show>
 
