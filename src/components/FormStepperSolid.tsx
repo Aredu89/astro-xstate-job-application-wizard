@@ -17,7 +17,9 @@ export default function FormStepper() {
 
   actor.subscribe((state) => {
     setCurrentStep(state.value as string);
-    setError(state.context.error ?? '');
+
+    const newError = state.context.error ?? '';
+    setError(prev => prev !== newError ? newError : prev);
   });
 
   actor.start();
