@@ -17,7 +17,7 @@ export default function FormStepper() {
 
   actor.subscribe((state) => {
     setCurrentStep(state.value as string);
-    setError('');
+    setError(state.context.error ?? '');
   });
 
   actor.start();
@@ -30,35 +30,20 @@ export default function FormStepper() {
     if (currentStep() === 'personalInfo') {
       const value = { name: name(), email: email() };
       actor.send({ type: 'NEXT', value });
-      const current = actor.getSnapshot();
-      if (current.matches('personalInfo')) {
-        setError('Please fill out both fields.');
-      }
     } else if (currentStep() === 'experience') {
       const value = {
         experienceYears: Number(experienceYears()),
         technologies: technologies()
       };
       actor.send({ type: 'NEXT', value });
-      const current = actor.getSnapshot();
-      if (current.matches('experience')) {
-        setError('Please fill out both experience fields.');
-      }
     } else if (currentStep() === 'portfolio') {
       const value = {
         portfolioLinks: portfolioLinks()
       };
       actor.send({ type: 'NEXT', value });
-      const current = actor.getSnapshot();
-      if (current.matches('portfolio')) {
-        setError('Please enter at least one portfolio link.');
-      }
     } else if (currentStep() === 'upload') {
-      if (!fileName()) {
-        setError('Please upload a file.');
-      } else {
-        actor.send({ type: 'NEXT', value: { fileName: fileName() } });
-      }
+      const value = { fileName: fileName() }
+      actor.send({ type: 'NEXT', value });
     }  else {
       actor.send({ type: 'NEXT' });
     }

@@ -5,6 +5,7 @@ export const formWizardMachine = setup({
   types: {
     context: {} as {
       data: FormData;
+      error?: string;
     },
     events: {} as
       | { type: 'NEXT'; value?: Partial<FormData> }
@@ -19,8 +20,12 @@ export const formWizardMachine = setup({
           ...context.data,
           ...(event.value ?? {}),
         },
+        error: "",
       };
     }),
+    sendValidationError: assign(({}, params: { message: string }) => ({
+      error: params?.message,
+    })),
     logFinalData: ({ context }) => {
       console.log('Form submitted with data:', context.data);
     }
@@ -33,46 +38,83 @@ export const formWizardMachine = setup({
       name: '',
       email: '',
     },
+    error: '',
   },
   states: {
     personalInfo: {
       on: {
-        NEXT: {
-          target: 'experience',
-          actions: "assignFormData",
-          guard: ({ event }) => !!event.value?.name && !!event.value?.email,
-        },
+        NEXT: [
+          {
+            target: 'experience',
+            actions: "assignFormData",
+            guard: ({ event }) => !!event.value?.name && !!event.value?.email,
+          },
+          {
+            target: "personalInfo",
+            actions: {
+              type: "sendValidationError",
+              params: { message: "Please fill out both fields." }
+            },
+          },
+        ],
       },
     },
     experience: {
       on: {
-        NEXT: {
-          target: 'portfolio',
-          actions: "assignFormData",
-          guard: ({ event }) =>
-            typeof event.value?.experienceYears === 'number' &&
-            !!event.value?.technologies,
-        },
+        NEXT: [
+          {
+            target: 'portfolio',
+            actions: "assignFormData",
+            guard: ({ event }) =>
+              typeof event.value?.experienceYears === 'number' &&
+              !!event.value?.technologies,
+          },
+          {
+            target: "experience",
+            actions: {
+              type: "sendValidationError",
+              params: { message: "Please fill out both experience fields." }
+            },
+          },
+        ],
         BACK: 'personalInfo',
       },
     },
     portfolio: {
       on: {
-        NEXT: {
-          target: 'upload',
-          actions: "assignFormData",
-          guard: ({ event }) => !!event.value?.portfolioLinks,
-        },
+        NEXT: [
+          {
+            target: 'upload',
+            actions: "assignFormData",
+            guard: ({ event }) => !!event.value?.portfolioLinks,
+          },
+          {
+            target: "portfolio",
+            actions: {
+              type: "sendValidationError",
+              params: { message: "Please enter at least one portfolio link." }
+            },
+          },
+        ],
         BACK: 'experience',
       },
     },
     upload: {
       on: {
-        NEXT: {
-          target: 'review',
-          actions: 'assignFormData',
-          guard: ({ event }) => !!event.value?.fileName,
-        },
+        NEXT: [
+          {
+            target: 'review',
+            actions: 'assignFormData',
+            guard: ({ event }) => !!event.value?.fileName,
+          },
+          {
+            target: "upload",
+            actions: {
+              type: "sendValidationError",
+              params: { message: "Please upload a file." }
+            },
+          },
+        ],
         BACK: 'portfolio',
       },
     },
