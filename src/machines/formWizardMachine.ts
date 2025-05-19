@@ -42,6 +42,7 @@ export const formWizardMachine = setup({
   },
   states: {
     personalInfo: {
+      meta: { title: 'Your Info' },
       on: {
         NEXT: [
           {
@@ -60,6 +61,7 @@ export const formWizardMachine = setup({
       },
     },
     experience: {
+      meta: { title: 'Work Experience' },
       on: {
         NEXT: [
           {
@@ -81,6 +83,7 @@ export const formWizardMachine = setup({
       },
     },
     portfolio: {
+      meta: { title: 'Portfolio' },
       on: {
         NEXT: [
           {
@@ -100,6 +103,7 @@ export const formWizardMachine = setup({
       },
     },
     upload: {
+      meta: { title: 'Resume' },
       on: {
         NEXT: [
           {
@@ -119,6 +123,7 @@ export const formWizardMachine = setup({
       },
     },
     review: {
+      meta: { title: 'Review your application' },
       on: {
         BACK: 'upload',
         SUBMIT: {
@@ -127,6 +132,6 @@ export const formWizardMachine = setup({
         }
       }
     },
-    submitted: { type: 'final' },
+    submitted: { meta: { title: 'Application submitted' }, type: 'final' },
   },
 });

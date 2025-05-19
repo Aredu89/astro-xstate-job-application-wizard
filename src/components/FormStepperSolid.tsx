@@ -12,21 +12,25 @@ export default function FormStepper() {
   const [technologies, setTechnologies] = createSignal('');
   const [portfolioLinks, setPortfolioLinks] = createSignal('');
   const [fileName, setFileName] = createSignal('');
+  const [title, setTitle] = createSignal('');
 
   const actor = createActor(formWizardMachine);
+  const snapshot = () => actor.getSnapshot();
+  const data = () => snapshot().context.data;
 
   actor.subscribe((state) => {
     setCurrentStep(state.value as string);
 
     const newError = state.context.error ?? '';
     setError(prev => prev !== newError ? newError : prev);
+
+    const meta = state.getMeta();
+    const currentId = `${formWizardMachine.id}.${snapshot().value}`;
+    setTitle((meta[currentId as keyof typeof meta])?.title ?? snapshot().value);
   });
 
   actor.start();
   onCleanup(() => actor.stop());
-
-  const snapshot = () => actor.getSnapshot();
-  const data = () => snapshot().context.data;
 
   const next = () => {
     if (currentStep() === 'personalInfo') {
@@ -55,7 +59,7 @@ export default function FormStepper() {
 
   return (
     <div>
-      <h2 class="text-xl font-bold mb-4">Step: {currentStep()}</h2>
+      <h2 class="text-xl font-bold mb-4">Step: {title()}</h2>
 
       <Show when={currentStep() === 'personalInfo'}>
         <div class="space-y-2">
