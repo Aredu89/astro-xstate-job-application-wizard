@@ -3,7 +3,6 @@ import { Show } from 'solid-js';
 export default function PersonalInfoStep(props: {
   name: string;
   email: string;
-  error: string;
   setName: (val: string) => void;
   setEmail: (val: string) => void;
 }) {
@@ -21,9 +20,6 @@ export default function PersonalInfoStep(props: {
         onInput={(e) => props.setEmail(e.currentTarget.value)}
         class="border p-2 rounded w-full"
       />
-      <Show when={props.error}>
-        <p class="text-red-500 text-sm">{props.error}</p>
-      </Show>
     </div>
   );
 };

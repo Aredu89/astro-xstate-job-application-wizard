@@ -2,6 +2,7 @@ import { createSignal, onCleanup, Show } from 'solid-js';
 import { createActor } from 'xstate';
 import { formWizardMachine } from '../machines/formWizardMachine';
 import Button from "./Button";
+import PersonalInfoStep from './PersonalInfo';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -62,23 +63,12 @@ export default function FormStepper() {
       <h2 class="text-xl font-bold mb-4">Step: {title()}</h2>
 
       <Show when={currentStep() === 'personalInfo'}>
-        <div class="space-y-2">
-          <input
-            placeholder="Your Name"
-            value={name()}
-            onInput={(e) => setName(e.currentTarget.value)}
-            class="border p-2 rounded w-full"
-          />
-          <input
-            placeholder="Your Email"
-            value={email()}
-            onInput={(e) => setEmail(e.currentTarget.value)}
-            class="border p-2 rounded w-full"
-          />
-          <Show when={error()}>
-            <p class="text-red-500 text-sm">{error()}</p>
-          </Show>
-        </div>
+        <PersonalInfoStep
+          name={name()}
+          setName={setName}
+          email={email()}
+          setEmail={setEmail}
+        />
       </Show>
 
       <Show when={currentStep() === "experience"}>
@@ -97,9 +87,6 @@ export default function FormStepper() {
             onInput={(e) => setTechnologies(e.currentTarget.value)}
             class="border p-2 rounded w-full"
           />
-          <Show when={error()}>
-            <p class="text-red-500 text-sm">{error()}</p>
-          </Show>
         </div>
       </Show>
 
@@ -112,9 +99,6 @@ export default function FormStepper() {
             class="border p-2 rounded w-full"
             rows="4"
           />
-          <Show when={error()}>
-            <p class="text-red-500 text-sm">{error()}</p>
-          </Show>
         </div>
       </Show>
 
@@ -138,10 +122,11 @@ export default function FormStepper() {
           <Show when={fileName()}>
             <p class="text-sm text-gray-700">Uploaded file: {fileName()}</p>
           </Show>
-          <Show when={error()}>
-            <p class="text-red-500 text-sm">{error()}</p>
-          </Show>
         </div>
+      </Show>
+
+      <Show when={error()}>
+        <p class="text-red-500 text-sm">{error()}</p>
       </Show>
 
       <Show when={currentStep() === 'review'}>
