@@ -125,10 +125,6 @@ export default function FormStepper() {
         </div>
       </Show>
 
-      <Show when={error()}>
-        <p class="text-red-500 text-sm">{error()}</p>
-      </Show>
-
       <Show when={currentStep() === 'review'}>
         <div class="space-y-2">
           <h3 class="text-lg font-semibold">Review Your Information</h3>
@@ -147,6 +143,10 @@ export default function FormStepper() {
         <div class="space-y-2">
           <h3 class="text-lg font-semibold">Thank you for applying!</h3>
         </div>
+      </Show>
+
+      <Show when={error()}>
+        <p class="text-red-500 text-sm">{error()}</p>
       </Show>
 
       <div class="space-x-2 mt-2">

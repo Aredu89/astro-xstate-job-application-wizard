@@ -26,9 +26,12 @@ export const formWizardMachine = setup({
     sendValidationError: assign(({}, params: { message: string }) => ({
       error: params?.message,
     })),
+    cleanError: assign(() => ({
+      error: "",
+    })),
     logFinalData: ({ context }) => {
       console.log('Form submitted with data:', context.data);
-    }
+    },
   },
 }).createMachine({
   id: 'formWizard',
@@ -79,7 +82,10 @@ export const formWizardMachine = setup({
             },
           },
         ],
-        BACK: 'personalInfo',
+        BACK: {
+          target: 'personalInfo',
+          actions: 'cleanError',
+        },
       },
     },
     portfolio: {
@@ -99,7 +105,10 @@ export const formWizardMachine = setup({
             },
           },
         ],
-        BACK: 'experience',
+        BACK: {
+          target: 'experience',
+          actions: 'cleanError',
+        },
       },
     },
     upload: {
@@ -119,13 +128,19 @@ export const formWizardMachine = setup({
             },
           },
         ],
-        BACK: 'portfolio',
+        BACK: {
+          target: 'portfolio',
+          actions: 'cleanError',
+        },
       },
     },
     review: {
       meta: { title: 'Review your application' },
       on: {
-        BACK: 'upload',
+        BACK: {
+          target: 'upload',
+          actions: 'cleanError',
+        },
         SUBMIT: {
           target: 'submitted',
           actions: 'logFinalData',
