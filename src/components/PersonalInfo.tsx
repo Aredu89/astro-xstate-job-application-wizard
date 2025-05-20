@@ -1,6 +1,9 @@
-import { Show } from 'solid-js';
-
-export default function PersonalInfoStep(props: {
+export default function PersonalInfoStep({
+  name,
+  email,
+  setName,
+  setEmail,
+}: {
   name: string;
   email: string;
   setName: (val: string) => void;
@@ -10,14 +13,14 @@ export default function PersonalInfoStep(props: {
     <div class="space-y-2">
       <input
         placeholder="Your Name"
-        value={props.name}
-        onInput={(e) => props.setName(e.currentTarget.value)}
+        value={name}
+        onInput={(e) => setName(e.currentTarget.value)}
         class="border p-2 rounded w-full"
       />
       <input
         placeholder="Your Email"
-        value={props.email}
-        onInput={(e) => props.setEmail(e.currentTarget.value)}
+        value={email}
+        onInput={(e) => setEmail(e.currentTarget.value)}
         class="border p-2 rounded w-full"
       />
     </div>

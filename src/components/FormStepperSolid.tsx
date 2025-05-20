@@ -3,6 +3,7 @@ import { createActor } from 'xstate';
 import { formWizardMachine } from '../machines/formWizardMachine';
 import Button from "./Button";
 import PersonalInfoStep from './PersonalInfo';
+import ExperienceStep from './Experience';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -72,22 +73,12 @@ export default function FormStepper() {
       </Show>
 
       <Show when={currentStep() === "experience"}>
-        <div class="space-y-2">
-          <input
-            type="number"
-            placeholder="Years of Experience"
-            value={experienceYears()}
-            onInput={(e) => setExperienceYears(e.currentTarget.valueAsNumber)}
-            class="border p-2 rounded w-full"
-          />
-          <input
-            type="text"
-            placeholder="Technologies used"
-            value={technologies()}
-            onInput={(e) => setTechnologies(e.currentTarget.value)}
-            class="border p-2 rounded w-full"
-          />
-        </div>
+        <ExperienceStep
+          experienceYears={experienceYears()}
+          setExperienceYears={setExperienceYears}
+          technologies={technologies()}
+          setTechnologies={setTechnologies}
+        />
       </Show>
 
       <Show when={currentStep() === 'portfolio'}>
