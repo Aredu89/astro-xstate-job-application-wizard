@@ -6,6 +6,7 @@ import PersonalInfoStep from './PersonalInfo';
 import ExperienceStep from './Experience';
 import PortfolioStep from './Portfolio';
 import UploadStep from './Upload';
+import ReviewInformationStep from './ReviewInformation';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -98,17 +99,7 @@ export default function FormStepper() {
       </Show>
 
       <Show when={currentStep() === 'review'}>
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold">Review Your Information</h3>
-          <ul class="list-disc ml-5 space-y-1 text-sm">
-            <li><strong>Name:</strong> {data().name}</li>
-            <li><strong>Email:</strong> {data().email}</li>
-            <li><strong>Years Experience:</strong> {data().experienceYears}</li>
-            <li><strong>Skills:</strong> {data().technologies}</li>
-            <li><strong>Portfolio URL:</strong> {data().portfolioLinks}</li>
-            <li><strong>Uploaded File:</strong> {data().fileName ?? 'None'}</li>
-          </ul>
-        </div>
+        <ReviewInformationStep data={data()} />
       </Show>
 
       <Show when={currentStep() === 'submitted'}>
