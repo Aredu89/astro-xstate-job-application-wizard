@@ -4,6 +4,7 @@ import { formWizardMachine } from '../machines/formWizardMachine';
 import Button from "./Button";
 import PersonalInfoStep from './PersonalInfo';
 import ExperienceStep from './Experience';
+import PortfolioStep from './Portfolio';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -82,15 +83,10 @@ export default function FormStepper() {
       </Show>
 
       <Show when={currentStep() === 'portfolio'}>
-        <div class="space-y-2">
-          <textarea
-            placeholder="Enter portfolio URLs (comma-separated)"
-            value={portfolioLinks()}
-            onInput={(e) => setPortfolioLinks(e.currentTarget.value)}
-            class="border p-2 rounded w-full"
-            rows="4"
-          />
-        </div>
+        <PortfolioStep
+          portfolioLinks={portfolioLinks()}
+          setPortfolioLinks={setPortfolioLinks}
+        />
       </Show>
 
       <Show when={currentStep() === 'upload'}>
