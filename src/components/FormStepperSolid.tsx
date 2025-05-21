@@ -5,6 +5,7 @@ import Button from "./Button";
 import PersonalInfoStep from './PersonalInfo';
 import ExperienceStep from './Experience';
 import PortfolioStep from './Portfolio';
+import UploadStep from './Upload';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -90,26 +91,10 @@ export default function FormStepper() {
       </Show>
 
       <Show when={currentStep() === 'upload'}>
-        <div class="space-y-2">
-          <input
-            type="file"
-            onChange={(e) => {
-              const file = e.currentTarget.files?.[0];
-              if (file) {
-                setFileName(file.name);
-              }
-            }}
-            class="block w-full text-sm text-gray-500
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-blue-50 file:text-blue-700
-                  hover:file:bg-blue-100"
-          />
-          <Show when={fileName()}>
-            <p class="text-sm text-gray-700">Uploaded file: {fileName()}</p>
-          </Show>
-        </div>
+        <UploadStep
+          fileName={fileName()}
+          setFileName={setFileName}
+        />
       </Show>
 
       <Show when={currentStep() === 'review'}>
