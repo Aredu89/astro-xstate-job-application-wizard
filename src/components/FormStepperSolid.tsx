@@ -1,13 +1,13 @@
 import { createSignal, onCleanup, Show } from 'solid-js';
 import { createActor } from 'xstate';
 import { formWizardMachine } from '../machines/formWizardMachine';
-import Button from "./Button";
 import PersonalInfoStep from './PersonalInfo';
 import ExperienceStep from './Experience';
 import PortfolioStep from './Portfolio';
 import UploadStep from './Upload';
 import ReviewInformationStep from './ReviewInformation';
 import Submitted from './Submitted';
+import FormButtons from './FormButtons';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -111,23 +111,12 @@ export default function FormStepper() {
         <p class="text-red-500 text-sm">{error()}</p>
       </Show>
 
-      <div class="space-x-2 mt-2">
-        {['experience', 'portfolio', 'upload', 'review'].includes(currentStep()) && (
-          <Button onClick={back} class="bg-gray-500 text-white">
-            Back
-          </Button>
-        )}
-        {['personalInfo', 'experience', 'portfolio', 'upload'].includes(currentStep()) && (
-          <Button onClick={next} class="bg-blue-500 text-white">
-            Next
-          </Button>
-        )}
-        {currentStep() === 'review' && (
-          <Button onClick={submit} class="bg-green-500 text-white">
-            Submit
-          </Button>
-        )}
-      </div>
+      <FormButtons
+        currentStep={currentStep}
+        onBack={back}
+        onNext={next}
+        onSubmit={submit}
+      />
     </div>
   );
 };
