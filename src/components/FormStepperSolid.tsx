@@ -7,6 +7,7 @@ import ExperienceStep from './Experience';
 import PortfolioStep from './Portfolio';
 import UploadStep from './Upload';
 import ReviewInformationStep from './ReviewInformation';
+import Submitted from './Submitted';
 
 export default function FormStepper() {
   const [currentStep, setCurrentStep] = createSignal('personalInfo');
@@ -103,9 +104,7 @@ export default function FormStepper() {
       </Show>
 
       <Show when={currentStep() === 'submitted'}>
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold">Thank you for applying!</h3>
-        </div>
+        <Submitted />
       </Show>
 
       <Show when={error()}>
