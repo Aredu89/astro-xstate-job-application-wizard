@@ -1,8 +1,4 @@
-export default function PortfolioStep(
-  {
-    portfolioLinks,
-    setPortfolioLinks,
-  }: {
+export default function PortfolioStep(props: {
     portfolioLinks: string;
     setPortfolioLinks: (val: string) => void;
   }
@@ -11,8 +7,8 @@ export default function PortfolioStep(
     <div class="space-y-2">
       <textarea
         placeholder="Enter portfolio URLs (comma-separated)"
-        value={portfolioLinks}
-        onInput={(e) => setPortfolioLinks(e.currentTarget.value)}
+        value={props.portfolioLinks}
+        onInput={(e) => props.setPortfolioLinks(e.currentTarget.value)}
         class="border p-2 rounded w-full"
         rows="4"
       />

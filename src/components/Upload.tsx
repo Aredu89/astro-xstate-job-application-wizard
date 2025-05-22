@@ -1,10 +1,6 @@
 import { Show } from "solid-js";
 
-export default function UploadStep(
-  {
-    fileName,
-    setFileName,
-  }: {
+export default function UploadStep(props: {
     fileName: string;
     setFileName: (val: string) => void;
   }
@@ -16,7 +12,7 @@ export default function UploadStep(
         onChange={(e) => {
           const file = e.currentTarget.files?.[0];
           if (file) {
-            setFileName(file.name);
+            props.setFileName(file.name);
           }
         }}
         class="block w-full text-sm text-gray-500
@@ -26,8 +22,8 @@ export default function UploadStep(
               file:bg-blue-50 file:text-blue-700
               hover:file:bg-blue-100"
       />
-      <Show when={fileName}>
-        <p class="text-sm text-gray-700">Uploaded file: {fileName}</p>
+      <Show when={props.fileName}>
+        <p class="text-sm text-gray-700">Uploaded file: {props.fileName}</p>
       </Show>
     </div>
   );

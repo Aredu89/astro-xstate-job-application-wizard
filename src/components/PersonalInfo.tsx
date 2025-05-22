@@ -1,9 +1,4 @@
-export default function PersonalInfoStep({
-  name,
-  email,
-  setName,
-  setEmail,
-}: {
+export default function PersonalInfoStep(props: {
   name: string;
   email: string;
   setName: (val: string) => void;
@@ -13,14 +8,14 @@ export default function PersonalInfoStep({
     <div class="space-y-2">
       <input
         placeholder="Your Name"
-        value={name}
-        onInput={(e) => setName(e.currentTarget.value)}
+        value={props.name}
+        onInput={(e) => props.setName(e.currentTarget.value)}
         class="border p-2 rounded w-full"
       />
       <input
         placeholder="Your Email"
-        value={email}
-        onInput={(e) => setEmail(e.currentTarget.value)}
+        value={props.email}
+        onInput={(e) => props.setEmail(e.currentTarget.value)}
         class="border p-2 rounded w-full"
       />
     </div>

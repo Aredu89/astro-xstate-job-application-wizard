@@ -1,9 +1,4 @@
-export default function ExperienceStep({
-  experienceYears,
-  technologies,
-  setExperienceYears,
-  setTechnologies,
-}: {
+export default function ExperienceStep(props: {
   experienceYears: number | '';
   technologies: string;
   setExperienceYears: (val: number) => void;
@@ -14,15 +9,15 @@ export default function ExperienceStep({
       <input
         type="number"
         placeholder="Years of Experience"
-        value={experienceYears}
-        onInput={(e) => setExperienceYears(e.currentTarget.valueAsNumber)}
+        value={props.experienceYears}
+        onInput={(e) => props.setExperienceYears(e.currentTarget.valueAsNumber)}
         class="border p-2 rounded w-full"
       />
       <input
         type="text"
         placeholder="Technologies used"
-        value={technologies}
-        onInput={(e) => setTechnologies(e.currentTarget.value)}
+        value={props.technologies}
+        onInput={(e) => props.setTechnologies(e.currentTarget.value)}
         class="border p-2 rounded w-full"
       />
     </div>
