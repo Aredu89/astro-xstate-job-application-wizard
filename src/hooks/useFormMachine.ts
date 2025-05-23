@@ -1,7 +1,8 @@
 import { createSignal, onCleanup } from 'solid-js';
 import { createActor } from 'xstate';
 import { formWizardMachine } from '../machines/formWizardMachine';
-import { Steps } from '../types/FormStepperSolid';
+import { Steps } from '../types/FormStepperSolid.type';
+import type { FormData } from '../machines/types';
 
 export function useFormMachine() {
   const [currentStep, setCurrentStep] = createSignal<Steps>(Steps.personalInfo);
@@ -22,5 +23,20 @@ export function useFormMachine() {
   actor.start();
   onCleanup(() => actor.stop());
 
-  return { actor, currentStep, error, title };
+  const snapshot = () => actor.getSnapshot();
+
+  const next = (value?: Partial<FormData>) => actor.send({ type: 'NEXT', value });
+  const back = () => actor.send({ type: 'BACK' });
+  const submit = () => actor.send({ type: 'SUBMIT' });
+
+  return {
+    actor,
+    currentStep,
+    error,
+    title,
+    next,
+    back,
+    submit,
+    snapshot,
+  };
 };

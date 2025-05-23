@@ -1,21 +1,19 @@
-export default function PersonalInfoStep(props: {
-  name: string;
-  email: string;
-  setName: (val: string) => void;
-  setEmail: (val: string) => void;
-}) {
+import { useFormState } from "../context/FormStateContext";
+
+export default function PersonalInfoStep() {
+  const { form, setForm } = useFormState();
   return (
     <div class="space-y-2">
       <input
         placeholder="Your Name"
-        value={props.name}
-        onInput={(e) => props.setName(e.currentTarget.value)}
+        value={form().name}
+        onInput={(e) => setForm({ name: e.currentTarget.value })}
         class="border p-2 rounded w-full"
       />
       <input
         placeholder="Your Email"
-        value={props.email}
-        onInput={(e) => props.setEmail(e.currentTarget.value)}
+        value={form().email}
+        onInput={(e) => setForm({ email: e.currentTarget.value })}
         class="border p-2 rounded w-full"
       />
     </div>

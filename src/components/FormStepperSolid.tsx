@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js';
+import { Show } from 'solid-js';
 import PersonalInfoStep from './PersonalInfo';
 import ExperienceStep from './Experience';
 import PortfolioStep from './Portfolio';
@@ -7,80 +7,22 @@ import ReviewInformationStep from './ReviewInformation';
 import Submitted from './Submitted';
 import FormButtons from './FormButtons';
 import { useFormMachine } from '../hooks/useFormMachine';
+import { useFormState } from '../context/FormStateContext';
 
 export default function FormStepper() {
-  const { actor, currentStep, error, title } = useFormMachine();
-  const [name, setName] = createSignal('');
-  const [email, setEmail] = createSignal('');
-  const [experienceYears, setExperienceYears] = createSignal<number | ''>('');
-  const [technologies, setTechnologies] = createSignal('');
-  const [portfolioLinks, setPortfolioLinks] = createSignal('');
-  const [fileName, setFileName] = createSignal('');
-
-  const snapshot = () => actor.getSnapshot();
-  const data = () => snapshot().context.data;
+  const { currentStep, error, title, snapshot, next, back, submit } = useFormMachine();
+  const { form } = useFormState();
 
   const stepsMap = {
-    personalInfo: () => (
-      <PersonalInfoStep
-        name={name()}
-        setName={setName}
-        email={email()}
-        setEmail={setEmail}
-      />
-    ),
-    experience: () => (
-      <ExperienceStep
-        experienceYears={experienceYears()}
-        setExperienceYears={setExperienceYears}
-        technologies={technologies()}
-        setTechnologies={setTechnologies}
-      />
-    ),
-    portfolio: () => (
-      <PortfolioStep
-        portfolioLinks={portfolioLinks()}
-        setPortfolioLinks={setPortfolioLinks}
-      />
-    ),
-    upload: () => (
-      <UploadStep
-        fileName={fileName()}
-        setFileName={setFileName}
-      />
-    ),
-    review: () => (
-      <ReviewInformationStep data={data()} />
-    ),
-    submitted: () => (
-      <Submitted />
-    ),
+    personalInfo: () => <PersonalInfoStep />,
+    experience: () => <ExperienceStep />,
+    portfolio: () => <PortfolioStep />,
+    upload: () => <UploadStep />,
+    review: () => <ReviewInformationStep data={snapshot().context.data} />,
+    submitted: () => <Submitted />,
   };
 
-  const next = () => {
-    if (currentStep() === 'personalInfo') {
-      const value = { name: name(), email: email() };
-      actor.send({ type: 'NEXT', value });
-    } else if (currentStep() === 'experience') {
-      const value = {
-        experienceYears: Number(experienceYears()),
-        technologies: technologies()
-      };
-      actor.send({ type: 'NEXT', value });
-    } else if (currentStep() === 'portfolio') {
-      const value = {
-        portfolioLinks: portfolioLinks()
-      };
-      actor.send({ type: 'NEXT', value });
-    } else if (currentStep() === 'upload') {
-      const value = { fileName: fileName() }
-      actor.send({ type: 'NEXT', value });
-    }  else {
-      actor.send({ type: 'NEXT' });
-    }
-  };
-  const back = () => actor.send({ type: 'BACK' });
-  const submit = () => actor.send({ type: 'SUBMIT' });
+  const handleNext = () => next(form());
 
   return (
     <div>
@@ -95,7 +37,7 @@ export default function FormStepper() {
       <FormButtons
         currentStep={currentStep}
         onBack={back}
-        onNext={next}
+        onNext={handleNext}
         onSubmit={submit}
       />
     </div>
