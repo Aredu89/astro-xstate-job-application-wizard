@@ -1,6 +1,4 @@
-import { createSignal, onCleanup, Show } from 'solid-js';
-import { createActor } from 'xstate';
-import { formWizardMachine } from '../machines/formWizardMachine';
+import { createSignal, Show } from 'solid-js';
 import PersonalInfoStep from './PersonalInfo';
 import ExperienceStep from './Experience';
 import PortfolioStep from './Portfolio';
@@ -8,36 +6,19 @@ import UploadStep from './Upload';
 import ReviewInformationStep from './ReviewInformation';
 import Submitted from './Submitted';
 import FormButtons from './FormButtons';
-import { Steps } from '../types/FormStepperSolid';
+import { useFormMachine } from '../hooks/useFormMachine';
 
 export default function FormStepper() {
-  const [currentStep, setCurrentStep] = createSignal<Steps>(Steps.personalInfo);
+  const { actor, currentStep, error, title } = useFormMachine();
   const [name, setName] = createSignal('');
   const [email, setEmail] = createSignal('');
-  const [error, setError] = createSignal('');
   const [experienceYears, setExperienceYears] = createSignal<number | ''>('');
   const [technologies, setTechnologies] = createSignal('');
   const [portfolioLinks, setPortfolioLinks] = createSignal('');
   const [fileName, setFileName] = createSignal('');
-  const [title, setTitle] = createSignal('');
 
-  const actor = createActor(formWizardMachine);
   const snapshot = () => actor.getSnapshot();
   const data = () => snapshot().context.data;
-
-  actor.subscribe((state) => {
-    setCurrentStep(state.value as Steps);
-
-    const newError = state.context.error ?? '';
-    setError(prev => prev !== newError ? newError : prev);
-
-    const meta = state.getMeta();
-    const currentId = `${formWizardMachine.id}.${snapshot().value}`;
-    setTitle((meta[currentId as keyof typeof meta])?.title ?? snapshot().value);
-  });
-
-  actor.start();
-  onCleanup(() => actor.stop());
 
   const stepsMap = {
     personalInfo: () => (
