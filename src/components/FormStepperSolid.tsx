@@ -8,9 +8,10 @@ import UploadStep from './Upload';
 import ReviewInformationStep from './ReviewInformation';
 import Submitted from './Submitted';
 import FormButtons from './FormButtons';
+import { Steps } from '../types/FormStepperSolid';
 
 export default function FormStepper() {
-  const [currentStep, setCurrentStep] = createSignal('personalInfo');
+  const [currentStep, setCurrentStep] = createSignal<Steps>(Steps.personalInfo);
   const [name, setName] = createSignal('');
   const [email, setEmail] = createSignal('');
   const [error, setError] = createSignal('');
@@ -25,7 +26,7 @@ export default function FormStepper() {
   const data = () => snapshot().context.data;
 
   actor.subscribe((state) => {
-    setCurrentStep(state.value as string);
+    setCurrentStep(state.value as Steps);
 
     const newError = state.context.error ?? '';
     setError(prev => prev !== newError ? newError : prev);
@@ -37,6 +38,43 @@ export default function FormStepper() {
 
   actor.start();
   onCleanup(() => actor.stop());
+
+  const stepsMap = {
+    personalInfo: () => (
+      <PersonalInfoStep
+        name={name()}
+        setName={setName}
+        email={email()}
+        setEmail={setEmail}
+      />
+    ),
+    experience: () => (
+      <ExperienceStep
+        experienceYears={experienceYears()}
+        setExperienceYears={setExperienceYears}
+        technologies={technologies()}
+        setTechnologies={setTechnologies}
+      />
+    ),
+    portfolio: () => (
+      <PortfolioStep
+        portfolioLinks={portfolioLinks()}
+        setPortfolioLinks={setPortfolioLinks}
+      />
+    ),
+    upload: () => (
+      <UploadStep
+        fileName={fileName()}
+        setFileName={setFileName}
+      />
+    ),
+    review: () => (
+      <ReviewInformationStep data={data()} />
+    ),
+    submitted: () => (
+      <Submitted />
+    ),
+  };
 
   const next = () => {
     if (currentStep() === 'personalInfo') {
@@ -67,45 +105,7 @@ export default function FormStepper() {
     <div>
       <h2 class="text-xl font-bold mb-4">Step: {title()}</h2>
 
-      <Show when={currentStep() === 'personalInfo'}>
-        <PersonalInfoStep
-          name={name()}
-          setName={setName}
-          email={email()}
-          setEmail={setEmail}
-        />
-      </Show>
-
-      <Show when={currentStep() === "experience"}>
-        <ExperienceStep
-          experienceYears={experienceYears()}
-          setExperienceYears={setExperienceYears}
-          technologies={technologies()}
-          setTechnologies={setTechnologies}
-        />
-      </Show>
-
-      <Show when={currentStep() === 'portfolio'}>
-        <PortfolioStep
-          portfolioLinks={portfolioLinks()}
-          setPortfolioLinks={setPortfolioLinks}
-        />
-      </Show>
-
-      <Show when={currentStep() === 'upload'}>
-        <UploadStep
-          fileName={fileName()}
-          setFileName={setFileName}
-        />
-      </Show>
-
-      <Show when={currentStep() === 'review'}>
-        <ReviewInformationStep data={data()} />
-      </Show>
-
-      <Show when={currentStep() === 'submitted'}>
-        <Submitted />
-      </Show>
+      {stepsMap[currentStep()]?.()}
 
       <Show when={error()}>
         <p class="text-red-500 text-sm">{error()}</p>
