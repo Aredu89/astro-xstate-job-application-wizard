@@ -7,6 +7,7 @@ export default function UploadStep() {
     <div class="space-y-2">
       <input
         type="file"
+        data-testid="file-input"
         onChange={(e) => {
           const file = e.currentTarget.files?.[0];
           if (file) {
