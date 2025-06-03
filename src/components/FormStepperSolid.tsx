@@ -1,13 +1,13 @@
-import { Show } from 'solid-js';
-import PersonalInfoStep from './PersonalInfo';
-import ExperienceStep from './Experience';
-import PortfolioStep from './Portfolio';
-import UploadStep from './Upload';
-import ReviewInformationStep from './ReviewInformation';
-import Submitted from './Submitted';
-import FormButtons from './FormButtons';
-import { useFormMachine } from '../hooks/useFormMachine';
-import { useFormState } from '../context/FormStateContext';
+import { Show } from "solid-js";
+import PersonalInfoStep from "./PersonalInfo";
+import ExperienceStep from "./Experience";
+import PortfolioStep from "./Portfolio";
+import UploadStep from "./Upload";
+import ReviewInformationStep from "./ReviewInformation";
+import Submitted from "./Submitted";
+import FormButtons from "./FormButtons";
+import { useFormMachine } from "../hooks/useFormMachine";
+import { useFormState } from "../context/FormStateContext";
 
 export default function FormStepper() {
   const { currentStep, error, title, snapshot, next, back, submit } = useFormMachine();
