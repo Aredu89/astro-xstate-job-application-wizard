@@ -1,5 +1,6 @@
-import { assign, setup, assertEvent } from 'xstate';
+import { assign, setup, assertEvent, sendTo } from 'xstate';
 import type { FormData } from "./types";
+import { uploadMachine } from "./uploadMachine";
 
 export const formWizardMachine = setup({
   types: {
@@ -10,11 +11,24 @@ export const formWizardMachine = setup({
     events: {} as
       | { type: 'NEXT'; value?: Partial<FormData> }
       | { type: 'BACK' }
-      | { type: 'SUBMIT' },
+      | { type: 'SUBMIT' }
+      | { type: 'UPLOAD_SUCCESS'; value: Partial<FormData> }
+      | { type: 'UPLOAD_ERROR'; message: string }
+      | { type: 'UPLOAD_BACK_REQUESTED' },
   },
   actions: {
     assignFormData: assign(({ context, event }) => {
       assertEvent(event, 'NEXT');
+      return {
+        data: {
+          ...context.data,
+          ...(event.value ?? {}),
+        },
+        error: "",
+      };
+    }),
+    assignUploadedData: assign(({ context, event }) => {
+      assertEvent(event, 'UPLOAD_SUCCESS');
       return {
         data: {
           ...context.data,
@@ -32,6 +46,9 @@ export const formWizardMachine = setup({
     logFinalData: ({ context }) => {
       console.log('Form submitted with data:', context.data);
     },
+  },
+  actors: {
+    uploadActor: uploadMachine,
   },
 }).createMachine({
   id: 'formWizard',
@@ -113,26 +130,47 @@ export const formWizardMachine = setup({
     },
     upload: {
       meta: { title: 'Resume' },
+      invoke: [
+        {
+          id: 'uploadService',
+          src: 'uploadActor',
+        },
+      ],
       on: {
-        NEXT: [
-          {
-            target: 'review',
-            actions: 'assignFormData',
-            guard: ({ event }) => !!event.value?.fileName,
-          },
-          {
-            target: "upload",
-            actions: {
-              type: "sendValidationError",
-              params: { message: "Please upload a file." }
+        UPLOAD_SUCCESS: {
+          target: 'review',
+          actions: 'assignUploadedData',
+        },
+        UPLOAD_ERROR: {
+          actions: {
+            type: "sendValidationError",
+            params: ({ event }) => {
+              assertEvent(event, 'UPLOAD_ERROR');
+              return { message: event.message };
             },
           },
-        ],
-        BACK: {
+        },
+        UPLOAD_BACK_REQUESTED: {
           target: 'portfolio',
           actions: 'cleanError',
         },
+        NEXT: {
+          actions: sendTo(
+            'uploadService',
+            ({ event }) => {
+              assertEvent(event, 'NEXT');
+              return { type: 'UPLOAD.NEXT', value: event.value };
+            }
+          ),
+        },
+        BACK: {
+          actions: sendTo(
+            'uploadService',
+            { type: 'UPLOAD.BACK' }
+          ),
+        },
       },
+      exit: 'cleanError',
     },
     review: {
       meta: { title: 'Review your application' },
