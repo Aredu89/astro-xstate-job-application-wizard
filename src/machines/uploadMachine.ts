@@ -1,4 +1,3 @@
-// uploadMachine.ts
 import { setup, assertEvent, sendParent } from 'xstate';
 import type { FormData } from "./types";
 
