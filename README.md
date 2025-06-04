@@ -4,6 +4,10 @@ This is a multi-step job application form built with Astro, Solid.js, and XState
 It guides users through entering personal info, experience, portfolio links, and uploading a resume, with validation at each step.
 The state machine handles the form flow and transitions, while the file upload step is delegated to a child machine for isolated validation logic.
 
+# Netlify Deploy
+
+[Deployed Multi-step Job Application app](https://multi-step-job-application.netlify.app/)
+
 ## 🧞 Commands
 
 All commands are run from the root of the project, from a terminal:
